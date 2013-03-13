@@ -47,7 +47,7 @@ AVRDUDE = avrdude
 DEPEND = $(SOURCES:.c=.d)
 
 # list all object files
-OBJECTS = $(addprefix $(OUTDIR)/,$(SOURCES:.c=.o))
+OBJECTS = $(addprefix $(OUTDIR)/,$(notdir $(SOURCES:.c=.o)))
 
 # default: build hex file
 all: $(OUTDIR)/$(TARGET).hex
