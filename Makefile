@@ -16,9 +16,9 @@ SOURCES = main.c
 # OUTDIR: directory to use for output
 OUTDIR = build
 # PROGRAMMER: name of programmer
-PROGRAMMER = dragon_isp
+PROGRAMMER = arduino
 # PORT: location of programmer
-PORT = usb
+PORT = /dev/ttyACM0
 # define flags
 CFLAGS = -mmcu=$(MCU) -g -Os -Wall -Wunused
 ASFLAGS = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
@@ -49,21 +49,26 @@ DEPEND = $(SOURCES:.c=.d)
 # list all object files
 OBJECTS = $(addprefix $(OUTDIR)/,$(SOURCES:.c=.o))
 
-# default: build all
-all: $(OUTDIR)/$(TARGET).elf $(OUTDIR)/$(TARGET).hex $(OUTDIR)/$(TARGET).srec
+# default: build hex file
+all: $(OUTDIR)/$(TARGET).hex
 
+# S-record file
 $(OUTDIR)/%.srec: $(OUTDIR)/%.elf
 	$(OBJCOPY) -j .text -j .data -O srec $< $@
 
-$(OUTDIR)/%.elf: $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) $(LIBS) -o $@
-
+# Intel hex file
 $(OUTDIR)/%.hex: $(OUTDIR)/%.elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
+# elf file
+$(OUTDIR)/%.elf: $(OBJECTS)
+	$(CC) $(OBJECTS) $(LDFLAGS) $(LIBS) -o $@
+
+# build all objects
 $(OUTDIR)/%.o: src/%.c | $(OUTDIR)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
+# assembly listing
 %.lst: %.c
 	$(CC) -c $(ASFLAGS) -Wa,-anlhd $< > $@
 
@@ -79,5 +84,6 @@ flash: $(OUTDIR)/$(TARGET).hex
 verify: $(OUTDIR)/$(TARGET).hex
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -U flash:v:$<
 
+# remove build artifacts and executables
 clean:
 	-$(RM) $(OUTDIR)/*
