@@ -87,3 +87,5 @@ verify: $(OUTDIR)/$(TARGET).hex
 # remove build artifacts and executables
 clean:
 	-$(RM) $(OUTDIR)/*
+
+.PHONY: all flash verify clean
