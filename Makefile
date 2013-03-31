@@ -43,7 +43,7 @@ MKDIR	= mkdir -p
 AVRDUDE = avrdude
 #######################################
 
-# file that includes all dependancies
+# file that includes all dependencies
 DEPEND = $(SOURCES:.c=.d)
 
 # list all object files
