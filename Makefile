@@ -19,11 +19,16 @@ OUTDIR = build
 PROGRAMMER = arduino
 # PORT: location of programmer
 PORT = /dev/ttyACM0
+
 # define flags
 CFLAGS = -mmcu=$(MCU) -g -Os -Wall -Wunused
 ASFLAGS = -mmcu=$(MCU) -x assembler-with-cpp -Wa,-gstabs
 LDFLAGS = -mmcu=$(MCU) -Wl,-Map=$(OUTDIR)/$(TARGET).map
-AVRDUDE_FLAGS = -p $(MCU) -c $(PROGRAMMER) -P $(PORT)
+# only use -P flag if port is set
+ifdef PORT
+PORT_FLAG = -P
+endif
+AVRDUDE_FLAGS = -p $(MCU) -c $(PROGRAMMER) $(PORT_FLAG) $(PORT)
 #######################################
 # end of user configuration
 #######################################
